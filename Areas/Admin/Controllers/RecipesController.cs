@@ -27,5 +27,23 @@ namespace MyRecipe.Areas.Admin.Controllers
 
             return View(recipes);
         }
+
+        // GET: Admin/Recipes/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var recipe = await _context.Recipe
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            return View(recipe);
+        }
     }
 }
