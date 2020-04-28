@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyRecipe.Data;
 using MyRecipe.Data.Entities;
@@ -11,10 +12,12 @@ namespace MyRecipe.Controllers
     public class RecipesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public RecipesController(ApplicationDbContext context)
+        public RecipesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            this.userManager = userManager;
         }
 
         // GET: Recipes/Create
@@ -30,10 +33,18 @@ namespace MyRecipe.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ImageUrl,Instructions,CreatedAt,PublishedAt,State")] Recipe recipe)
         {
-            recipe.State = RecipeState.PendingApproval;
-
             if (ModelState.IsValid)
             {
+                recipe.State = RecipeState.PendingApproval;
+
+                var user = userManager.GetUserAsync(HttpContext.User).Result;
+
+                // TODO:
+                // 1. plocka ut id för användaren via claims, 
+                // 2. ladda användare
+                // 3. koppla användaren till recept
+                recipe.CreatedBy = user;
+
                 _context.Add(recipe);
                 
                 await _context.SaveChangesAsync();
