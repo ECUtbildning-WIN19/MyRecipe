@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyRecipe.Data;
 using MyRecipe.Data.Entities;
+using MyRecipe.Models.Domain;
 
 namespace MyRecipe.Controllers
 {
@@ -29,6 +30,8 @@ namespace MyRecipe.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ImageUrl,Instructions,CreatedAt,PublishedAt,State")] Recipe recipe)
         {
+            recipe.State = RecipeState.PendingApproval;
+
             if (ModelState.IsValid)
             {
                 _context.Add(recipe);
