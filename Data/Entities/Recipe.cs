@@ -60,5 +60,7 @@ namespace MyRecipe.Data.Entities
         {
             State = RecipeState.PendingApproval;
         }
+
+        public bool IsApproved => State == RecipeState.Approved;
     }
 }
